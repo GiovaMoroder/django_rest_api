@@ -84,7 +84,7 @@ class NameNormalizer:
         return alias_to_city
     
     
-    def normalize(self, name: str) -> str:
+    def normalize(self, name: str) -> Optional[str]:
         """
         Normalize a name using all configured strategies.
         

@@ -25,7 +25,7 @@ def normalize_name(request, name):
         return JsonResponse({'error': 'Normalization failed'}, status=500)
 
     if normalized_name is None:
-        raise NotFound(f"City not found: {name}")
+        raise NotFound(f"Name not found: {name}")
 
     return JsonResponse({
         'original_name': name,
