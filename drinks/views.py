@@ -1,6 +1,8 @@
 from django.http import JsonResponse
+from rest_framework.exceptions import NotFound
 from .models import Drink
 from .serializers import DrinkSerializer
+from .normalizers import NameNormalizer
 
 def drinklist(request):
     # Logic to list drinks
@@ -10,25 +12,22 @@ def drinklist(request):
 
 def normalize_name(request, name):
     """
-    Normalize a given name.
-    For now, this function simply passes through the name as requested.
+    Normalize a given name using the NameNormalizer class.
     """
+    if not name or not name.strip():
+        return JsonResponse({'error': 'Name cannot be empty'}, status=400)
+
+    normalizer = NameNormalizer()
+
     try:
-        # Basic validation - ensure name is not empty
-        if not name or not name.strip():
-            return JsonResponse({
-                'error': 'Name cannot be empty'
-            }, status=400)
-        
-        # For now, just return the name as-is (pass through)
-        normalized_name = name.strip()
-        
-        return JsonResponse({
-            'original_name': name,
-            'normalized_name': normalized_name
-        })
-        
-    except Exception as e:
-        return JsonResponse({
-            'error': 'An error occurred while normalizing the name'
-        }, status=500)
+        normalized_name = normalizer.normalize(name)
+    except Exception:
+        return JsonResponse({'error': 'Normalization failed'}, status=500)
+
+    if normalized_name is None:
+        raise NotFound(f"City not found: {name}")
+
+    return JsonResponse({
+        'original_name': name,
+        'normalized_name': normalized_name
+    })
