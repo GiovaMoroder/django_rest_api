@@ -95,7 +95,7 @@ class NameNormalizer:
             The normalized name
         """
         if not name:
-            return ""
+            return None
         
         normalized = name
         
